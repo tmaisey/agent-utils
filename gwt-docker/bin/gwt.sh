@@ -140,6 +140,40 @@ __gwt_generate_env() {
   env "${env_vars[@]}" /opt/homebrew/bin/envsubst "$var_list" < "$template_path" > "$output_path"
 }
 
+# Copy keys from main worktree's .env that aren't in the generated .env
+# Args: main_env_path generated_env_path
+__gwt_propagate_secrets() {
+  local main_env="$1"
+  local generated_env="$2"
+
+  [[ ! -f "$main_env" ]] && return 0
+
+  # Collect keys already in generated .env
+  local -A existing_keys=()
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "$line" ]] && continue
+    local key="${line%%=*}"
+    existing_keys[$key]=1
+  done < "$generated_env"
+
+  # Append missing keys from main .env
+  local appended=false
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "$line" ]] && continue
+    local key="${line%%=*}"
+    if [[ -z "${existing_keys[$key]+x}" ]]; then
+      if [[ "$appended" = false ]]; then
+        echo "" >> "$generated_env"
+        echo "# Propagated from root worktree" >> "$generated_env"
+        appended=true
+      fi
+      echo "$line" >> "$generated_env"
+    fi
+  done < "$main_env"
+}
+
 # Pretty-print allocated port table for current worktree
 __gwt_print_ports() {
   local gwt_index="$1"
@@ -178,9 +212,20 @@ __gwt_main_worktree() {
   git -C "$repo_root" worktree list --porcelain 2>/dev/null | grep '^worktree ' | head -1 | sed 's/^worktree //'
 }
 
-# ─── Main Commands ───────────────────────────────────────────────────────────
+# ─── Subcommands ─────────────────────────────────────────────────────────────
 
-gwt() {
+__gwt_cmd_help() {
+  echo "gwt — Git worktree helper with Docker port isolation"
+  echo ""
+  echo "Usage:"
+  echo "  gwt <branch> [--claude|-c]   Create worktree with port isolation"
+  echo "  gwt cleanup <branch> [-f]    Remove worktree, stop Docker, delete branch"
+  echo "  gwt list                     List all worktrees with port ranges"
+  echo "  gwt ports                    Show port assignments for current worktree"
+  echo "  gwt help                     Show this help"
+}
+
+__gwt_cmd_create() {
   local start_claude=false
   local branch=""
 
@@ -192,7 +237,7 @@ gwt() {
   done
 
   if [[ -z "$branch" ]]; then
-    echo "Usage: gwt <branch-name> [--claude|-c]"
+    __gwt_cmd_help
     return 1
   fi
 
@@ -264,6 +309,11 @@ gwt() {
     # Generate .env
     __gwt_generate_env "$template" ".env" "$sanitized_name" "$compose_project" "$start_port" "${port_vars[@]}"
 
+    # Propagate secrets from main worktree
+    local main_wt
+    main_wt=$(__gwt_main_worktree "$repo_root")
+    __gwt_propagate_secrets "${main_wt}/.env" ".env"
+
     echo ""
     __gwt_print_ports ".gwt_index" "$template"
     echo ""
@@ -271,6 +321,11 @@ gwt() {
     # Template exists but no port vars — still generate .env for WORKTREE_NAME/COMPOSE_PROJECT_NAME
     echo "0 0" > .gwt_index
     __gwt_generate_env "$template" ".env" "$sanitized_name" "$compose_project" "0"
+
+    # Propagate secrets from main worktree
+    local main_wt
+    main_wt=$(__gwt_main_worktree "$repo_root")
+    __gwt_propagate_secrets "${main_wt}/.env" ".env"
   fi
 
   echo "Worktree ready: $worktree_path"
@@ -282,7 +337,7 @@ gwt() {
 }
 
 # Show port assignments for current worktree
-gwt-ports() {
+__gwt_cmd_ports() {
   local gwt_index=".gwt_index"
   if [[ ! -f "$gwt_index" ]]; then
     # Try to find it relative to git root
@@ -307,7 +362,7 @@ gwt-ports() {
 }
 
 # List all worktrees with branch, path, and port range
-gwt-list() {
+__gwt_cmd_list() {
   local repo_root
   repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
   if [[ $? -ne 0 ]]; then
@@ -381,7 +436,7 @@ gwt-list() {
 }
 
 # Remove a worktree with Docker cleanup
-gwt-cleanup() {
+__gwt_cmd_cleanup() {
   local branch=""
   local force=false
 
@@ -393,7 +448,7 @@ gwt-cleanup() {
   done
 
   if [[ -z "$branch" ]]; then
-    echo "Usage: gwt-cleanup <branch> [--force|-f]"
+    echo "Usage: gwt cleanup <branch> [--force|-f]"
     return 1
   fi
 
@@ -476,7 +531,7 @@ gwt-cleanup() {
   fi
 
   if [[ $? -ne 0 ]]; then
-    echo "error: failed to remove worktree (try --force)"
+    echo "error: failed to remove worktree (try -f)"
     return 1
   fi
 
@@ -489,8 +544,20 @@ gwt-cleanup() {
   fi
 
   if [[ $? -ne 0 ]]; then
-    echo "warning: could not delete branch '$branch' (may not be fully merged — use --force)"
+    echo "warning: could not delete branch '$branch' (may not be fully merged — use -f)"
   fi
 
   echo "Done."
+}
+
+# ─── Main Dispatch ───────────────────────────────────────────────────────────
+
+gwt() {
+  case "${1:-}" in
+    ports)   shift; __gwt_cmd_ports "$@" ;;
+    list)    shift; __gwt_cmd_list "$@" ;;
+    cleanup) shift; __gwt_cmd_cleanup "$@" ;;
+    help|-h|--help) __gwt_cmd_help ;;
+    *)       __gwt_cmd_create "$@" ;;
+  esac
 }

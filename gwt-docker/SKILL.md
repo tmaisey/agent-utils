@@ -24,9 +24,10 @@ When a project has `.env.template`, gwt parses `*_PORT` variables, allocates a u
 | Command | Description |
 |---------|-------------|
 | `gwt <branch> [--claude\|-c]` | Create worktree, allocate ports, optionally launch Claude |
-| `gwt-ports` | Show port assignments for current worktree |
-| `gwt-list` | Show all worktrees with branch, path, and port range |
-| `gwt-cleanup <branch> [-f]` | Remove worktree: stops Docker, removes worktree, deletes branch |
+| `gwt ports` | Show port assignments for current worktree |
+| `gwt list` | Show all worktrees with branch, path, and port range |
+| `gwt cleanup <branch> [-f]` | Remove worktree: stops Docker, removes worktree, deletes branch |
+| `gwt help` | Show available commands |
 
 ## Conventions
 
