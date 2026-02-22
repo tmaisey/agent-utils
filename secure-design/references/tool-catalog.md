@@ -1,6 +1,6 @@
 # Tool Catalog
 
-Reference for all CLI tools used by the security-audit skill. Each entry covers invocation, output parsing, severity mapping, and timeouts.
+Reference for all CLI tools used by the secure-design skill. Each entry covers invocation, output parsing, severity mapping, and timeouts.
 
 ## Auto-Detection
 

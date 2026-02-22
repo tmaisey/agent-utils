@@ -3,8 +3,9 @@
 # Security audit workflow for GitHub Actions.
 # Copy this file to .github/workflows/ in your repository.
 #
-# Results appear in the Security tab (only visible to repo writers).
+# Findings are stored as workflow artifacts (downloadable by repo writers).
 # The workflow itself just passes/fails — no vulnerability details in logs.
+# For private-repo Security tab setup, see references/ci-integration.md.
 
 name: Security Audit
 
@@ -27,7 +28,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write  # Required for SARIF upload to Security tab
 
 jobs:
   security-audit:
@@ -89,11 +89,12 @@ jobs:
           .github/scripts/security-audit -p "$PROFILE" -q --sarif > results.sarif
         continue-on-error: true
 
-      # --- Upload to Security Tab (private to repo writers) ---
+      # --- Upload findings as artifact (safe for any repo visibility) ---
 
-      - name: Upload SARIF
+      - name: Upload findings
         if: always() && hashFiles('results.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: results.sarif
-          category: security-audit
+          name: security-audit-findings
+          path: results.sarif
+          retention-days: 30

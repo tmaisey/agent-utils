@@ -84,9 +84,39 @@ The simplest CI integration — run the CLI and use its exit code:
     retention-days: 30
 ```
 
-### SARIF Output for GitHub Security Tab
+### SARIF Output
 
-The `--sarif` flag produces SARIF 2.1.0 output that uploads to GitHub's Security tab. Results are **only visible to people with write access** — even on public repos. This keeps vulnerability details private while the workflow just passes/fails publicly.
+The `--sarif` flag produces SARIF 2.1.0 output — a structured format suitable for CI artifacts and security tooling.
+
+**Do not upload SARIF to GitHub's Security tab on public repositories.** Despite GitHub's documentation stating that Security tab results are "only visible to people with write access," the findings are accessible to anyone with read access on public repos. This effectively publishes your vulnerability details.
+
+The SARIF output converts all unified findings (from all tools) into a single SARIF file with:
+- Severity mapping: Critical/High → `error`, Medium → `warning` (Low findings are excluded from SARIF output)
+- File locations with line numbers where available
+- Remediation guidance, CVE/CWE references, and package version info in messages
+
+**Recommended: Store as workflow artifact**
+
+Workflow artifacts are only downloadable by users with write access to the repository. This is the safe default for any repo visibility:
+
+```yaml
+steps:
+  - name: Security audit
+    run: .github/scripts/security-audit -p quick -q --sarif > results.sarif
+    continue-on-error: true
+
+  - name: Upload findings
+    if: always() && hashFiles('results.sarif') != ''
+    uses: actions/upload-artifact@v4
+    with:
+      name: security-audit-findings
+      path: results.sarif
+      retention-days: 30
+```
+
+**Private repositories only: GitHub Security tab**
+
+If your repository is **private**, you can optionally upload SARIF to GitHub's Security tab for integrated code scanning alerts. Do not use this on public repos:
 
 ```yaml
 permissions:
@@ -98,18 +128,13 @@ steps:
     run: .github/scripts/security-audit -p quick -q --sarif > results.sarif
     continue-on-error: true
 
-  - name: Upload SARIF
+  - name: Upload SARIF (private repos only)
     if: always()
     uses: github/codeql-action/upload-sarif@v3
     with:
       sarif_file: results.sarif
       category: security-audit
 ```
-
-The SARIF output converts all unified findings (from all tools) into a single SARIF file with:
-- Severity mapping: Critical/High → `error`, Medium → `warning` (Low findings are excluded from SARIF output)
-- File locations with line numbers where available
-- Remediation guidance, CVE/CWE references, and package version info in messages
 
 ### Running Individual Tools
 
@@ -193,6 +218,12 @@ security-audit:
 - Require security-audit check to pass before merge
 - Exception process for acknowledged/accepted risks
 - Auto-fix where possible (`npm audit fix`, dependency PRs)
+
+### Findings Storage
+- Never upload SARIF to GitHub's Security tab on public repositories
+- Store SARIF as workflow artifacts (downloadable only by repo writers)
+- Never commit findings files to the repository
+- Local dev scans use `~/.local/share/security-audit/<repo>/` (outside the repo tree)
 
 ### Secrets in CI
 - Never log tool output that might contain discovered secrets

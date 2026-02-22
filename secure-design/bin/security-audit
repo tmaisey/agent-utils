@@ -74,7 +74,7 @@ SCAN OPTIONS
   -t, --tool <name>                     Run only this tool (repeatable)
       --stdout                          Print full markdown report to stdout
       --json                            Print unified findings JSON to stdout
-      --sarif                           Print SARIF 2.1.0 to stdout (for GitHub Security tab)
+      --sarif                           Print SARIF 2.1.0 to stdout (for CI artifacts or tooling)
       --no-parallel                     Run tools sequentially
   -v, --verbose                         Show tool commands and raw output
   -q, --quiet                           Suppress progress, just exit code
