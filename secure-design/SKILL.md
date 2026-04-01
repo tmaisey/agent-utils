@@ -14,6 +14,17 @@ This skill covers two complementary workflows: **designing secure software** and
 **auditing existing code**. Prevention comes first — catching a design flaw
 before implementation is cheaper than finding it in a scan afterward.
 
+## Skill Contents
+
+| Path | What it is |
+|------|------------|
+| `bin/security-audit` | **Executable CLI** (bash) — the scanner. Run it directly or copy into target repos for CI. |
+| `references/secure-design.md` | Design-time principles, architecture patterns, threat modeling process |
+| `references/agent-checks.md` | 18 code-review patterns for agent manual review (post-scan) |
+| `references/tool-catalog.md` | Per-tool invocation, output parsing, severity mapping |
+| `references/ci-integration.md` | CI/CD pipeline setup (GitHub Actions, GitLab) |
+| `assets/github-action.example.yml` | Copy-ready GitHub Actions workflow template |
+
 ---
 
 The following section covers the **design review workflow** — applying the
@@ -74,13 +85,26 @@ in code.
 The following sections cover the **audit workflow** — running the CLI scanner
 and agent code review against an existing codebase.
 
-## Quick Reference
+## The CLI: `bin/security-audit`
+
+The audit workflow is driven by `bin/security-audit` — a bash script located
+**in this skill folder**. It is not installed globally; run it by its path.
+
+**Prerequisites** (must be available before running the CLI):
+- **git** — the CLI detects the repo root via `git rev-parse`; it will refuse to
+  run outside a git repository
+- **bash 3.2+** — compatible with macOS default bash
+- **jq** — required for JSON processing (`security-audit setup` will install it)
+- **Scan tools** — gitleaks, semgrep, bandit, etc. are installed on first run
+  via `security-audit setup`; the CLI auto-detects which tools apply to the repo
+
+### Quick Reference
 
 ```
-security-audit [scan] [-p quick|standard|deep] [--stdout] [--json] [--sarif]
-security-audit setup [--check-only]
-security-audit report [--latest|--list] [--stdout]
-security-audit version
+bin/security-audit [scan] [-p quick|standard|deep] [--stdout] [--json] [--sarif]
+bin/security-audit setup [--check-only]
+bin/security-audit report [--latest|--list] [--stdout]
+bin/security-audit version
 ```
 
 | Flag | Purpose |
@@ -100,12 +124,14 @@ Reports are stored in `~/.local/share/security-audit/<repo>/` — never in the r
 
 ### 1. Run the CLI
 
-```bash
-# First time — install tools
-security-audit setup
+Run `bin/security-audit` from this skill folder by its full path:
 
-# Scan the repository
-security-audit -p standard
+```bash
+# First time — install required scan tools
+/path/to/secure-design/bin/security-audit setup
+
+# Scan the repository (run from within the target git repo)
+/path/to/secure-design/bin/security-audit -p standard
 ```
 
 The CLI auto-detects languages, runs applicable tools in parallel, normalizes
@@ -116,13 +142,13 @@ findings to a unified severity scale, deduplicates, and prints a summary.
 Read the summary printed to terminal. For full details:
 
 ```bash
-security-audit report --stdout    # print latest report
+/path/to/secure-design/bin/security-audit report --stdout    # print latest report
 ```
 
 Or read `findings.json` directly for structured data:
 
 ```bash
-security-audit report --latest    # shows file path
+/path/to/secure-design/bin/security-audit report --latest    # shows file path
 ```
 
 ### 3. Agent Code Review
@@ -208,6 +234,9 @@ Three CLI output patterns for getting findings into the private tracker:
 3. **Stdout piping** (`--stdout`, `--json`) — agent can direct output into `security_internal.md` or any private system.
 
 ## Reference Files
+
+**CLI**
+- `bin/security-audit` — executable scanner CLI (bash); run by path, requires git + jq
 
 **Design (prevention)**
 - `references/secure-design.md` — secure-by-design principles, architecture-level security patterns, lightweight threat modeling process
