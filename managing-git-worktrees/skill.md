@@ -1,5 +1,5 @@
 ---
-name: gwt-docker
+name: managing-git-worktrees
 description: >
   Git worktree management CLI with automatic Docker port isolation.
   Use when creating, listing, or cleaning up git worktrees. Also use

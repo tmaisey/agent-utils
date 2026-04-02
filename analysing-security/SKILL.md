@@ -1,5 +1,5 @@
 ---
-name: secure-design
+name: analyising-security
 description: >
   Prevention-first security for software projects. Two workflows: a **design
   review** for applying secure-by-design principles before writing code, and a
