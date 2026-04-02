@@ -1,5 +1,7 @@
+#!/bin/zsh
 # gwt.sh — Git worktree helper with Docker port isolation
 # Source from .zshrc: source /path/to/agent-skills/gwt-docker/bin/gwt.sh
+# Or run directly: ./gwt.sh <command> [args]
 
 __GWT_PORT_BASE=40000
 __GWT_PORT_CEILING=65535
@@ -398,8 +400,8 @@ __gwt_cmd_list() {
       if [[ "$wt_path" = "$main_wt" ]]; then
         port_info="(manual .env)"
       elif [[ -f "${wt_path}/.gwt_index" ]]; then
-        local sp bs
-        read -r sp bs < "${wt_path}/.gwt_index"
+        local gwt_alloc=("${(@f)$(< "${wt_path}/.gwt_index")}")
+        local sp="${gwt_alloc[1]%% *}" bs="${gwt_alloc[1]#* }"
         if (( bs > 0 )); then
           port_info="${sp}–$(( sp + bs - 1 ))"
         else
@@ -421,8 +423,8 @@ __gwt_cmd_list() {
     if [[ "$wt_path" = "$main_wt" ]]; then
       port_info="(manual .env)"
     elif [[ -f "${wt_path}/.gwt_index" ]]; then
-      local sp bs
-      read -r sp bs < "${wt_path}/.gwt_index"
+      local gwt_alloc=("${(@f)$(< "${wt_path}/.gwt_index")}")
+      local sp="${gwt_alloc[1]%% *}" bs="${gwt_alloc[1]#* }"
       if (( bs > 0 )); then
         port_info="${sp}–$(( sp + bs - 1 ))"
       else
@@ -561,3 +563,8 @@ gwt() {
     *)       __gwt_cmd_create "$@" ;;
   esac
 }
+
+# Allow direct invocation: ./gwt.sh <command> [args]
+if [[ "${ZSH_EVAL_CONTEXT}" != *:file:* ]] 2>/dev/null || [[ -z "${ZSH_EVAL_CONTEXT+x}" ]]; then
+  gwt "$@"
+fi
