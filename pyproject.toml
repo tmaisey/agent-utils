@@ -1,0 +1,14 @@
+[project]
+name = "agent-skills-tests"
+version = "0.1.0"
+description = "Test harness for the agent-skills repo (content + meta tests)."
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8.0",
+    "pyyaml>=6.0",
+    "mistune>=3.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/content"]
+addopts = "-ra"

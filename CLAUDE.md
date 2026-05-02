@@ -50,6 +50,26 @@ Pure documentation edits (SKILL.md prose, references, assets, README) don't
 need a SPEC entry, but if a doc change asserts CLI behaviour, the assertion
 must already be covered by a test.
 
+### Three runners, by design
+
+Don't try to consolidate these, each one fits its target:
+
+- **`tests/cli/`** uses **bats** (bash/zsh CLIs are sourced and called natively;
+  pytest-via-subprocess loses shell semantics and forces a fresh shell per
+  assertion).
+- **`tests/content/`** uses **pytest** (markdown parsing, frontmatter checks,
+  cross-file structural assertions, Python's ecosystem is the right tool).
+- **`tests/rubrics/`** are **markdown checklists applied by an agent** (Claude
+  Code or equivalent). Run on demand, not on every commit. SPEC entries with
+  `runner: agent` flip `"passes": true` when an applied rubric report is clean.
+
+`make test` runs bats + pytest. Rubrics are out-of-band: `make rubrics-list`.
+
+Functional `security-audit` tests that exercise real scanners (gitleaks, trivy,
+semgrep) `skip` when the scanner isn't on PATH. The test exists and runs the
+moment the dep is installed; suite stays green on a fresh machine. SPEC entries
+declare these gates via a `requires:` list.
+
 ## When updating a skill
 
 1. Follow the TDD sequence above for any CLI change.

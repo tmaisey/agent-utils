@@ -5,9 +5,9 @@ designing new features, reviewing architecture proposals, or threat modeling
 before code is written.
 
 Three sections build on each other:
-1. **Core Principles** — foundational rules that prevent vulnerability classes
-2. **Architecture Patterns** — concrete checklists for common security domains
-3. **Threat Modeling** — lightweight process to surface risks in a single pass
+1. **Core Principles**, foundational rules that prevent vulnerability classes
+2. **Architecture Patterns**, concrete checklists for common security domains
+3. **Threat Modeling**, lightweight process to surface risks in a single pass
 
 ---
 
@@ -19,7 +19,7 @@ during design. Each includes agent guidance for when and how to apply it.
 ### 1. Least Privilege
 
 **Definition**: Grant the minimum permissions, access, and capabilities needed
-for a component to perform its function — nothing more.
+for a component to perform its function, nothing more.
 
 **Agent guidance**: Apply whenever a design introduces a new service account,
 API key scope, file system access, database role, or tool permission. Ask:
@@ -27,7 +27,7 @@ API key scope, file system access, database role, or tool permission. Ask:
 down until the answer is acceptable.
 
 **Example**: A reporting service needs read access to the `orders` table. Grant
-`SELECT` on `orders` only — not `SELECT` on the entire database, and never
+`SELECT` on `orders` only, not `SELECT` on the entire database, and never
 `INSERT`/`UPDATE`/`DELETE`.
 
 ---
@@ -57,7 +57,7 @@ restrictive path. Security should require opting out, not opting in.
 **Agent guidance**: Apply when designing configuration, feature flags, or
 framework defaults. Check: "What happens if a developer uses this component
 without reading the docs?" If the answer involves an open permission, an
-unencrypted channel, or a permissive policy — the default is insecure.
+unencrypted channel, or a permissive policy, the default is insecure.
 
 **Example**: A new API framework should require authentication on all endpoints
 by default. Developers explicitly mark public endpoints with `@public`, rather
@@ -94,7 +94,7 @@ admin interfaces exposed to the public internet, debug endpoints left enabled,
 and unused dependencies.
 
 **Example**: An internal admin API should be on a separate network interface
-or behind a VPN — not exposed alongside the public API on the same port with
+or behind a VPN, not exposed alongside the public API on the same port with
 only an auth check separating them.
 
 ---
@@ -102,7 +102,7 @@ only an auth check separating them.
 ### 6. Separation of Privilege
 
 **Definition**: Critical operations should require multiple independent
-conditions, parties, or credentials — never a single point of authorization.
+conditions, parties, or credentials, never a single point of authorization.
 
 **Agent guidance**: Apply to destructive operations (data deletion, account
 deactivation, production deployments, secret rotation). Check whether a single
@@ -130,7 +130,7 @@ payloads, LLM outputs. Each needs validation appropriate to its use.
 
 **Example**: A service that reads messages from a queue shared with other teams
 must validate and sanitize message payloads the same way it would validate
-HTTP input — the queue is a trust boundary.
+HTTP input, the queue is a trust boundary.
 
 ---
 
@@ -154,7 +154,7 @@ clear failure modes.
 
 ## Architecture-Level Security Patterns
 
-Concrete patterns for six domains. Each includes a design checklist — items the
+Concrete patterns for six domains. Each includes a design checklist, items the
 agent should verify against any proposed architecture.
 
 ### Authentication
@@ -166,7 +166,7 @@ deployment model. Enforce token lifecycle: issuance, expiration, refresh, revoca
 **Design checklist**:
 - [ ] Authentication mechanism chosen (session vs. token) with justification
 - [ ] Token/session expiration configured (access token: short-lived, refresh token: bounded)
-- [ ] Token storage defined (HttpOnly cookies for web, secure storage for mobile — never localStorage for sensitive tokens)
+- [ ] Token storage defined (HttpOnly cookies for web, secure storage for mobile, never localStorage for sensitive tokens)
 - [ ] Service-to-service auth specified (mTLS, API keys with rotation, or OAuth2 client credentials)
 - [ ] MFA required or recommended for privileged accounts
 - [ ] Brute-force protection in place (rate limiting, account lockout, progressive delays)
@@ -175,14 +175,14 @@ deployment model. Enforce token lifecycle: issuance, expiration, refresh, revoca
 ### Authorization
 
 **Pattern**: Enforce who-can-do-what through a centralized policy layer. Choose
-a model — RBAC (role-based), ABAC (attribute-based), or ReBAC (relationship-based)
-— based on complexity of access rules. Centralize enforcement to prevent
+a model, RBAC (role-based), ABAC (attribute-based), or ReBAC (relationship-based)
+, based on complexity of access rules. Centralize enforcement to prevent
 scattered, inconsistent checks.
 
 **Design checklist**:
 - [ ] Authorization model selected (RBAC/ABAC/ReBAC) with justification
-- [ ] Default policy is deny — access requires an explicit grant
-- [ ] Policy enforcement centralized (middleware, gateway, or policy engine — not ad-hoc per handler)
+- [ ] Default policy is deny, access requires an explicit grant
+- [ ] Policy enforcement centralized (middleware, gateway, or policy engine, not ad-hoc per handler)
 - [ ] Resource-level permissions enforced (not just role checks, but ownership/relationship checks)
 - [ ] Privilege escalation paths identified and gated (role changes require admin + confirmation)
 - [ ] Authorization decisions logged for audit trail
@@ -225,7 +225,7 @@ Log access to sensitive data.
 - [ ] Data classification applied (PII, financial, health, credentials, internal, public)
 - [ ] Encryption at rest for sensitive data (database-level, field-level, or disk-level)
 - [ ] Encryption in transit enforced (TLS 1.2+ for all connections, no plaintext fallback)
-- [ ] Password hashing uses a modern algorithm (bcrypt, argon2, or scrypt — never MD5/SHA1)
+- [ ] Password hashing uses a modern algorithm (bcrypt, argon2, or scrypt, never MD5/SHA1)
 - [ ] PII handling complies with applicable regulations (GDPR right-to-delete, data minimization)
 - [ ] Audit logging for access to sensitive data (who accessed what, when)
 
@@ -261,7 +261,7 @@ Run this process when a design introduces any of:
 
 Enumerate what you're protecting and who interacts with it.
 
-**Assets** — classify by sensitivity:
+**Assets**, classify by sensitivity:
 | Classification | Examples |
 |----------------|----------|
 | Credentials | API keys, passwords, tokens, private keys |
@@ -270,7 +270,7 @@ Enumerate what you're protecting and who interacts with it.
 | Internal | Configuration, feature flags, metrics |
 | Public | Marketing content, public API docs |
 
-**Actors** — enumerate who interacts:
+**Actors**, enumerate who interacts:
 - Anonymous users (unauthenticated)
 - Authenticated users (with roles/permissions)
 - Internal services (microservices, background jobs)
@@ -278,7 +278,7 @@ Enumerate what you're protecting and who interacts with it.
 - Third-party integrations (webhooks, OAuth providers)
 - AI agents (Claude Code, MCP servers, automated tools)
 
-**Trust boundaries** — draw lines between actors with different trust levels:
+**Trust boundaries**, draw lines between actors with different trust levels:
 - Internet ↔ load balancer/CDN
 - Load balancer ↔ application server
 - Application ↔ database

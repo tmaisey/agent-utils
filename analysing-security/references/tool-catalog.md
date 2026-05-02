@@ -22,17 +22,17 @@ Run tools only when their language indicators are present:
 
 ---
 
-## 1. gitleaks — Secrets Detection
+## 1. gitleaks, Secrets Detection
 
 **What it checks**: Hardcoded secrets, API keys, tokens, passwords in code and git history.
 
-**Invocation — staged/recent commits (quick/standard)**:
+**Invocation, staged/recent commits (quick/standard)**:
 ```bash
 gitleaks detect --source . --no-banner --report-format json --report-path /dev/stdout \
   --log-opts="HEAD~20..HEAD" 2>/dev/null
 ```
 
-**Invocation — full git history (deep)**:
+**Invocation, full git history (deep)**:
 ```bash
 gitleaks detect --source . --no-banner --report-format json --report-path /dev/stdout 2>/dev/null
 ```
@@ -40,11 +40,11 @@ gitleaks detect --source . --no-banner --report-format json --report-path /dev/s
 **Output format**: JSON array of finding objects.
 
 **Parse fields**:
-- `RuleID` — rule that triggered (e.g., `generic-api-key`)
-- `File` — file path
-- `StartLine` — line number
-- `Secret` — the matched secret (redact in reports — show first/last 3 chars)
-- `Commit` — commit SHA (for history scans)
+- `RuleID`, rule that triggered (e.g., `generic-api-key`)
+- `File`, file path
+- `StartLine`, line number
+- `Secret`, the matched secret (redact in reports, show first/last 3 chars)
+- `Commit`, commit SHA (for history scans)
 
 **Severity mapping**:
 | gitleaks rule category | Mapped severity |
@@ -55,11 +55,11 @@ gitleaks detect --source . --no-banner --report-format json --report-path /dev/s
 
 **Timeout**: 60s (quick/standard), 300s (deep/full history).
 
-**Alternative — trufflehog**: `trufflehog git file://. --json` provides similar functionality with verified-secret detection (checks if secrets are still active). Not required but noted as an alternative. Install via `brew install trufflehog`.
+**Alternative, trufflehog**: `trufflehog git file://. --json` provides similar functionality with verified-secret detection (checks if secrets are still active). Not required but noted as an alternative. Install via `brew install trufflehog`.
 
 ---
 
-## 2. pip-audit — Python Dependency Vulnerabilities
+## 2. pip-audit, Python Dependency Vulnerabilities
 
 **What it checks**: Known CVEs in installed Python packages (Python Advisory Database).
 
@@ -80,11 +80,11 @@ pip-audit -r requirements.txt --format=json --desc 2>/dev/null
 ```
 
 **Parse fields**:
-- `name` — package name
-- `version` — installed version
-- `vulns[].id` — CVE/PYSEC identifier
-- `vulns[].fix_versions` — versions that fix the issue
-- `vulns[].description` — vulnerability description
+- `name`, package name
+- `version`, installed version
+- `vulns[].id`, CVE/PYSEC identifier
+- `vulns[].fix_versions`, versions that fix the issue
+- `vulns[].description`, vulnerability description
 
 **Severity mapping**:
 | Condition | Mapped severity |
@@ -102,7 +102,7 @@ review for exploit intelligence.
 
 ---
 
-## 3. npm audit — Node.js Dependency Vulnerabilities
+## 3. npm audit, Node.js Dependency Vulnerabilities
 
 **What it checks**: Known CVEs in npm packages (GitHub Advisory Database).
 
@@ -112,9 +112,9 @@ npm audit --json 2>/dev/null
 ```
 
 **Parse fields**:
-- `vulnerabilities.<pkg>.severity` — npm's own severity (critical/high/moderate/low)
-- `vulnerabilities.<pkg>.via[].url` — advisory URL
-- `vulnerabilities.<pkg>.fixAvailable` — whether `npm audit fix` can resolve it
+- `vulnerabilities.<pkg>.severity`, npm's own severity (critical/high/moderate/low)
+- `vulnerabilities.<pkg>.via[].url`, advisory URL
+- `vulnerabilities.<pkg>.fixAvailable`, whether `npm audit fix` can resolve it
 
 **Severity mapping** (direct from npm):
 | npm severity | Mapped severity |
@@ -130,31 +130,31 @@ npm audit --json 2>/dev/null
 
 ---
 
-## 4. trivy — Multi-Purpose Vulnerability Scanner
+## 4. trivy, Multi-Purpose Vulnerability Scanner
 
 **What it checks**: OS packages, language dependencies, Dockerfiles, IaC misconfigurations (NVD + multi-source).
 
-**Invocation — filesystem mode**:
+**Invocation, filesystem mode**:
 ```bash
 trivy fs --format json --severity HIGH,CRITICAL --quiet . 2>/dev/null
 ```
 
-**Invocation — Docker image mode** (if Dockerfile present):
+**Invocation, Docker image mode** (if Dockerfile present):
 ```bash
 trivy image --format json --severity HIGH,CRITICAL --quiet <image-name> 2>/dev/null
 ```
 
-**Invocation — IaC config mode**:
+**Invocation, IaC config mode**:
 ```bash
 trivy config --format json --severity HIGH,CRITICAL --quiet . 2>/dev/null
 ```
 
 **Parse fields**:
-- `Results[].Vulnerabilities[].VulnerabilityID` — CVE identifier
-- `Results[].Vulnerabilities[].Severity` — CRITICAL/HIGH/MEDIUM/LOW
-- `Results[].Vulnerabilities[].PkgName` — affected package
+- `Results[].Vulnerabilities[].VulnerabilityID`, CVE identifier
+- `Results[].Vulnerabilities[].Severity`, CRITICAL/HIGH/MEDIUM/LOW
+- `Results[].Vulnerabilities[].PkgName`, affected package
 - `Results[].Vulnerabilities[].InstalledVersion` / `FixedVersion`
-- `Results[].Vulnerabilities[].Title` — short description
+- `Results[].Vulnerabilities[].Title`, short description
 
 **Severity mapping**: Direct from trivy output (already standard).
 
@@ -164,7 +164,7 @@ trivy config --format json --severity HIGH,CRITICAL --quiet . 2>/dev/null
 
 ---
 
-## 5. checkov — IaC Security Scanner
+## 5. checkov, IaC Security Scanner
 
 **What it checks**: Terraform, CloudFormation, Kubernetes, Dockerfile misconfigurations.
 
@@ -174,11 +174,11 @@ checkov -d . --output json --quiet --compact 2>/dev/null
 ```
 
 **Parse fields**:
-- `results.failed_checks[].check_id` — CKV rule ID
-- `results.failed_checks[].check_result.result` — FAILED
-- `results.failed_checks[].file_path` — file
-- `results.failed_checks[].file_line_range` — [start, end]
-- `results.failed_checks[].guideline` — remediation URL
+- `results.failed_checks[].check_id`, CKV rule ID
+- `results.failed_checks[].check_result.result`, FAILED
+- `results.failed_checks[].file_path`, file
+- `results.failed_checks[].file_line_range`, [start, end]
+- `results.failed_checks[].guideline`, remediation URL
 
 **Severity mapping**:
 | CKV check category | Mapped severity |
@@ -193,7 +193,7 @@ checkov -d . --output json --quiet --compact 2>/dev/null
 
 ---
 
-## 6. govulncheck — Go Vulnerability Scanner
+## 6. govulncheck, Go Vulnerability Scanner
 
 **What it checks**: Known vulnerabilities in Go dependencies (Go Vulnerability Database).
 
@@ -203,10 +203,10 @@ govulncheck -json ./... 2>/dev/null
 ```
 
 **Parse fields**:
-- `finding.osv` — OSV identifier
-- `finding.trace[].function` — affected function
-- `finding.trace[].position.filename` — file
-- `finding.trace[].position.line` — line number
+- `finding.osv`, OSV identifier
+- `finding.trace[].function`, affected function
+- `finding.trace[].position.filename`, file
+- `finding.trace[].position.line`, line number
 
 **Severity mapping**:
 | Condition | Mapped severity |
@@ -220,7 +220,7 @@ govulncheck -json ./... 2>/dev/null
 
 ---
 
-## 7. cargo audit — Rust Dependency Vulnerabilities
+## 7. cargo audit, Rust Dependency Vulnerabilities
 
 **What it checks**: Known CVEs in Rust crates (RustSec Advisory Database).
 
@@ -230,12 +230,12 @@ cargo audit --json 2>/dev/null
 ```
 
 **Parse fields**:
-- `vulnerabilities.list[].advisory.id` — RUSTSEC identifier
-- `vulnerabilities.list[].advisory.title` — description
-- `vulnerabilities.list[].advisory.severity` — CVSS severity
-- `vulnerabilities.list[].package.name` — crate name
-- `vulnerabilities.list[].package.version` — installed version
-- `vulnerabilities.list[].versions.patched` — fixed versions
+- `vulnerabilities.list[].advisory.id`, RUSTSEC identifier
+- `vulnerabilities.list[].advisory.title`, description
+- `vulnerabilities.list[].advisory.severity`, CVSS severity
+- `vulnerabilities.list[].package.name`, crate name
+- `vulnerabilities.list[].package.version`, installed version
+- `vulnerabilities.list[].versions.patched`, fixed versions
 
 **Severity mapping**: Direct from CVSS in advisory.
 
@@ -245,7 +245,7 @@ cargo audit --json 2>/dev/null
 
 ---
 
-## 8. bundler-audit — Ruby Dependency Vulnerabilities
+## 8. bundler-audit, Ruby Dependency Vulnerabilities
 
 **What it checks**: Known CVEs in Ruby gems (rubysec Advisory Database).
 
@@ -255,11 +255,11 @@ bundler-audit check --format json 2>/dev/null
 ```
 
 **Parse fields**:
-- `results[].advisory.id` — CVE identifier
-- `results[].advisory.title` — description
-- `results[].advisory.criticality` — high/medium/low
-- `results[].gem.name` — gem name
-- `results[].gem.version` — installed version
+- `results[].advisory.id`, CVE identifier
+- `results[].advisory.title`, description
+- `results[].advisory.criticality`, high/medium/low
+- `results[].gem.name`, gem name
+- `results[].gem.version`, installed version
 
 **Severity mapping**: Direct from criticality field.
 
@@ -269,7 +269,7 @@ bundler-audit check --format json 2>/dev/null
 
 ---
 
-## 9. bandit — Python Static Analysis
+## 9. bandit, Python Static Analysis
 
 **What it checks**: Common security issues in Python code (hardcoded passwords, SQL injection, exec usage, etc.).
 
@@ -279,14 +279,14 @@ bandit -r . -f json --severity-level medium 2>/dev/null
 ```
 
 **Parse fields**:
-- `results[].test_id` — B-code (e.g., B101)
-- `results[].test_name` — human-readable name
-- `results[].issue_severity` — HIGH/MEDIUM/LOW
-- `results[].issue_confidence` — HIGH/MEDIUM/LOW
-- `results[].filename` — file path
-- `results[].line_number` — line
-- `results[].issue_text` — description
-- `results[].code` — code snippet
+- `results[].test_id`, B-code (e.g., B101)
+- `results[].test_name`, human-readable name
+- `results[].issue_severity`, HIGH/MEDIUM/LOW
+- `results[].issue_confidence`, HIGH/MEDIUM/LOW
+- `results[].filename`, file path
+- `results[].line_number`, line
+- `results[].issue_text`, description
+- `results[].code`, code snippet
 
 **Severity mapping**:
 | bandit severity + confidence | Mapped severity |
@@ -302,7 +302,7 @@ bandit -r . -f json --severity-level medium 2>/dev/null
 
 ---
 
-## 10. shellcheck — Shell Script Analysis
+## 10. shellcheck, Shell Script Analysis
 
 **What it checks**: Common shell scripting bugs, portability issues, and security pitfalls.
 
@@ -312,11 +312,11 @@ shellcheck -f json --severity=warning *.sh **/*.sh 2>/dev/null
 ```
 
 **Parse fields**:
-- `[].code` — SC rule number (e.g., 2086)
-- `[].level` — error/warning/info/style
-- `[].message` — description
-- `[].file` — file path
-- `[].line` / `[].column` — position
+- `[].code`, SC rule number (e.g., 2086)
+- `[].level`, error/warning/info/style
+- `[].message`, description
+- `[].file`, file path
+- `[].line` / `[].column`, position
 
 **Severity mapping**:
 | shellcheck level | Mapped severity |
@@ -326,9 +326,9 @@ shellcheck -f json --severity=warning *.sh **/*.sh 2>/dev/null
 | info, style | **Low** |
 
 **Security-relevant rules** (always flag these as High):
-- SC2086 — word splitting (command injection risk)
-- SC2091 — eval-like constructs
-- SC2046 — unquoted command substitution
+- SC2086, word splitting (command injection risk)
+- SC2091, eval-like constructs
+- SC2046, unquoted command substitution
 
 **Exit codes**: 0 = clean, 1 = findings.
 
@@ -336,7 +336,7 @@ shellcheck -f json --severity=warning *.sh **/*.sh 2>/dev/null
 
 ---
 
-## 11. hadolint — Dockerfile Linter
+## 11. hadolint, Dockerfile Linter
 
 **What it checks**: Dockerfile best practices and security issues.
 
@@ -348,11 +348,11 @@ hadolint --format json Dockerfile* **/Dockerfile* 2>/dev/null
 ```
 
 **Parse fields**:
-- `[].code` — DL rule number (e.g., DL3006)
-- `[].level` — error/warning/info/style
-- `[].message` — description
-- `[].file` — file path
-- `[].line` — line number
+- `[].code`, DL rule number (e.g., DL3006)
+- `[].level`, error/warning/info/style
+- `[].message`, description
+- `[].file`, file path
+- `[].line`, line number
 
 **Severity mapping**:
 | hadolint level | Mapped severity |
@@ -362,13 +362,13 @@ hadolint --format json Dockerfile* **/Dockerfile* 2>/dev/null
 | info, style | **Low** |
 
 **Security-relevant rules** (always flag as High):
-- DL3000 — `WORKDIR` should use an absolute path
-- DL3002 — last user should not be root
-- DL3004 — do not use sudo
-- DL3006 — always tag the `FROM` image
-- DL3009 — delete apt-get lists after install
-- DL3018 — pin versions in apk add
-- DL3019 — avoid apk upgrade
+- DL3000, `WORKDIR` should use an absolute path
+- DL3002, last user should not be root
+- DL3004, do not use sudo
+- DL3006, always tag the `FROM` image
+- DL3009, delete apt-get lists after install
+- DL3018, pin versions in apk add
+- DL3019, avoid apk upgrade
 
 **Exit codes**: 0 = clean, 1 = findings.
 
@@ -376,11 +376,11 @@ hadolint --format json Dockerfile* **/Dockerfile* 2>/dev/null
 
 ---
 
-## 12. semgrep — Multi-Language SAST
+## 12. semgrep, Multi-Language SAST
 
 **What it checks**: Language-aware static analysis with pattern matching. Covers OWASP Top 10, injection, crypto, auth issues.
 
-> **Warning**: Do **not** use the "opengrep" fork — it was subject to a supply
+> **Warning**: Do **not** use the "opengrep" fork, it was subject to a supply
 > chain compromise. Use the official semgrep package only.
 
 **Invocation**:
@@ -398,14 +398,14 @@ semgrep scan --config=p/owasp-top-ten --json --quiet . 2>/dev/null
 ```
 
 **Parse fields**:
-- `results[].check_id` — rule identifier (e.g., `python.lang.security.audit.exec-detected`)
-- `results[].extra.severity` — ERROR/WARNING/INFO
-- `results[].extra.message` — description
-- `results[].path` — file path
-- `results[].start.line` / `results[].end.line` — line range
-- `results[].extra.lines` — code snippet
-- `results[].extra.metadata.cwe` — CWE identifiers
-- `results[].extra.metadata.owasp` — OWASP categories
+- `results[].check_id`, rule identifier (e.g., `python.lang.security.audit.exec-detected`)
+- `results[].extra.severity`, ERROR/WARNING/INFO
+- `results[].extra.message`, description
+- `results[].path`, file path
+- `results[].start.line` / `results[].end.line`, line range
+- `results[].extra.lines`, code snippet
+- `results[].extra.metadata.cwe`, CWE identifiers
+- `results[].extra.metadata.owasp`, OWASP categories
 
 **Severity mapping**:
 | semgrep severity | Mapped severity |
@@ -438,6 +438,6 @@ All tools map to a unified 4-level scale:
 
 If a tool exceeds its timeout:
 1. Kill the process
-2. Log a warning: `"⚠ {tool} timed out after {N}s — results incomplete"`
+2. Log a warning: `"⚠ {tool} timed out after {N}s, results incomplete"`
 3. Continue with remaining tools
 4. Report overall status as exit code 2 (tool error) if any tool failed

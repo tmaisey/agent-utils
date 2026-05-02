@@ -18,7 +18,7 @@ These are substituted by `gwt.sh` during worktree creation:
 
 ### Static variables (use literal values)
 
-Everything else should be a literal value — no `${}` wrapping:
+Everything else should be a literal value, no `${}` wrapping:
 
 ```bash
 # GOOD — literal values
@@ -48,11 +48,11 @@ POSTGRES_DB=${POSTGRES_DB}
 ```
 
 This means:
-- `${DB_PORT}` — discovered ✓
-- `${MAILHOG_SMTP_PORT}` — discovered ✓
-- `${db_port}` — NOT discovered (lowercase)
-- `DB_PORT=5432` — NOT discovered (no `${}` wrapper)
-- `$DB_PORT` — NOT discovered (no braces)
+- `${DB_PORT}`, discovered ✓
+- `${MAILHOG_SMTP_PORT}`, discovered ✓
+- `${db_port}`, NOT discovered (lowercase)
+- `DB_PORT=5432`, NOT discovered (no `${}` wrapper)
+- `$DB_PORT`, NOT discovered (no braces)
 
 ### Order matters
 

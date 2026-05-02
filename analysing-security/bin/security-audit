@@ -505,10 +505,13 @@ tool_command() {
 
   case "$tool" in
     gitleaks)
+      # gitleaks 8.x refuses to write its report to /dev/stdout on macOS
+      # (permission denied). Write to a tmp file and cat it instead, so the
+      # caller's stdout-to-raw-file redirect still picks up the JSON.
       if [[ "$PROFILE" == "deep" ]]; then
-        echo "gitleaks detect --source . --no-banner --report-format json --report-path /dev/stdout 2>/dev/null"
+        echo 'gl=$(mktemp); gitleaks detect --source . --no-banner --report-format json --report-path "$gl" 2>/dev/null; rc=$?; cat "$gl" 2>/dev/null; rm -f "$gl"; exit $rc'
       else
-        echo "gitleaks detect --source . --no-banner --report-format json --report-path /dev/stdout --log-opts='HEAD~20..HEAD' 2>/dev/null"
+        echo 'gl=$(mktemp); gitleaks detect --source . --no-banner --report-format json --report-path "$gl" --log-opts=HEAD~20..HEAD 2>/dev/null; rc=$?; cat "$gl" 2>/dev/null; rm -f "$gl"; exit $rc'
       fi ;;
     pip-audit)
       echo "pip-audit --format=json --desc 2>/dev/null" ;;

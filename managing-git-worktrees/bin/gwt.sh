@@ -565,6 +565,9 @@ gwt() {
 }
 
 # Allow direct invocation: ./gwt.sh <command> [args]
-if [[ "${ZSH_EVAL_CONTEXT}" != *:file:* ]] 2>/dev/null || [[ -z "${ZSH_EVAL_CONTEXT+x}" ]]; then
+# When sourced (from .zshrc, another script, or `zsh -c "source ...; ..."`), the
+# eval context contains "file" — skip the dispatcher in that case. When invoked
+# directly the context is just "toplevel" (no "file"), so we run the dispatcher.
+if [[ "${ZSH_EVAL_CONTEXT:-}" != *file* ]]; then
   gwt "$@"
 fi

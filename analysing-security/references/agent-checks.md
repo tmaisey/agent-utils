@@ -1,13 +1,13 @@
 # Agent Review Patterns
 
-18 code-review patterns for the agent to check during security audits. Split into two sections: traditional security (1–12) and AI/agent security (13–18).
+18 code-review patterns for the agent to check during security audits. Split into two sections: traditional security (1-12) and AI/agent security (13-18).
 
-**Standard profile**: Runs patterns 1–5 (traditional) + 13–15 (AI/agent).
+**Standard profile**: Runs patterns 1-5 (traditional) + 13-15 (AI/agent).
 **Deep profile**: Runs all 18 patterns.
 
 ---
 
-## Traditional Security Patterns (1–12)
+## Traditional Security Patterns (1-12)
 
 ### 1. Hardcoded Secrets
 
@@ -471,7 +471,7 @@ payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
 ---
 
-## AI / Agent Security Patterns (13–18)
+## AI / Agent Security Patterns (13-18)
 
 These patterns address security concerns specific to AI-assisted development environments (Claude Code, Copilot, Cursor, etc.) and LLM agent frameworks.
 
@@ -799,8 +799,8 @@ This allows: Write a malicious script → execute it via Bash.
 
 ## Pattern Selection by Profile
 
-| Profile | Traditional (1–12) | AI/Agent (13–18) |
+| Profile | Traditional (1-12) | AI/Agent (13-18) |
 |---|---|---|
-| **Quick** | _(none — CLI tools only)_ | _(none)_ |
-| **Standard** | 1–5 | 13–15 |
-| **Deep** | 1–12 | 13–18 |
+| **Quick** | _(none, CLI tools only)_ | _(none)_ |
+| **Standard** | 1-5 | 13-15 |
+| **Deep** | 1-12 | 13-18 |

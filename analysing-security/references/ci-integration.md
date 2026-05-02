@@ -2,7 +2,7 @@
 
 How to run security-audit in CI/CD pipelines. Covers GitHub Actions, GitLab CI, and general CI principles.
 
-## Quick Start — GitHub Actions
+## Quick Start, GitHub Actions
 
 Copy `assets/github-action.example.yml` to `.github/workflows/security-audit.yml` in your repository.
 
@@ -20,15 +20,15 @@ For scheduled scans (weekly), use the **standard** profile to include static ana
 
 | Code | CI behavior |
 |---|---|
-| 0 | Pass — no findings at Medium or above |
-| 1 | Fail — at least one Medium+ finding |
-| 2 | Warning — tool error, findings may be incomplete (takes precedence over exit 1) |
+| 0 | Pass, no findings at Medium or above |
+| 1 | Fail, at least one Medium+ finding |
+| 2 | Warning, tool error, findings may be incomplete (takes precedence over exit 1) |
 
 ## GitHub Actions
 
 ### Tool Installation
 
-Install tools in CI using the CLI's setup subcommand. The CLI is **not globally installed** on CI runners — copy `bin/security-audit` from this skill into your repo (e.g. `.github/scripts/security-audit`) and reference it by path:
+Install tools in CI using the CLI's setup subcommand. The CLI is **not globally installed** on CI runners, copy `bin/security-audit` from this skill into your repo (e.g. `.github/scripts/security-audit`) and reference it by path:
 
 ```yaml
 - name: Install security tools
@@ -63,7 +63,7 @@ Or install specific tools individually to minimize CI time:
 
 ### Running via CLI
 
-The simplest CI integration — run the CLI and use its exit code:
+The simplest CI integration, run the CLI and use its exit code:
 
 ```yaml
 # Quick scan on PRs
@@ -86,7 +86,7 @@ The simplest CI integration — run the CLI and use its exit code:
 
 ### SARIF Output
 
-The `--sarif` flag produces SARIF 2.1.0 output — a structured format suitable for CI artifacts and security tooling.
+The `--sarif` flag produces SARIF 2.1.0 output, a structured format suitable for CI artifacts and security tooling.
 
 **Do not upload SARIF to GitHub's Security tab on public repositories.** Despite GitHub's documentation stating that Security tab results are "only visible to people with write access," the findings are accessible to anyone with read access on public repos. This effectively publishes your vulnerability details.
 

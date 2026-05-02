@@ -138,7 +138,7 @@ Running multiple feature branches in parallel breaks the moment two of them try 
 
 ```
 managing-git-worktrees/
-├── skill.md                            entry point + CLI command reference
+├── SKILL.md                            entry point + CLI command reference
 ├── bin/
 │   └── gwt.sh                          worktree + port-allocation CLI (zsh)
 ├── references/

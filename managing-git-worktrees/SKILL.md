@@ -9,7 +9,7 @@ description: >
   listing, and port deconfliction for parallel development.
 ---
 
-# gwt — Git Worktree Management
+# gwt, Git Worktree Management
 
 ## CLI
 
@@ -26,7 +26,7 @@ All worktree operations go through the gwt CLI. Run it directly via Bash:
 | `<branch> [--claude\|-c]` | Create worktree with port isolation, optionally launch Claude |
 | `ports` | Show port assignments for current worktree |
 
-Always use this CLI for worktree lifecycle operations. Do not use raw `git worktree` commands — the CLI handles Docker teardown, port index cleanup, and branch deletion that raw git commands miss.
+Always use this CLI for worktree lifecycle operations. Do not use raw `git worktree` commands, the CLI handles Docker teardown, port index cleanup, and branch deletion that raw git commands miss.
 
 ## When to read child docs
 
@@ -45,6 +45,6 @@ These are the essential conventions. The child docs above have full detail.
 
 - `.env.template` is committed; `.env` and `.gwt_index` are gitignored
 - Port variables **must** end in `_PORT` and use `${VAR}` syntax
-- In `docker-compose.yml`, never hardcode host ports — use `"${DB_PORT:-5432}:5432"`
+- In `docker-compose.yml`, never hardcode host ports, use `"${DB_PORT:-5432}:5432"`
 - `COMPOSE_PROJECT_NAME` isolates networks and volumes automatically
 - Root worktree keeps a manual `.env` with standard ports; gwt never overwrites it

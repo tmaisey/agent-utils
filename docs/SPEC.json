@@ -1,0 +1,175 @@
+{
+  "$schema_note": "Test-coverage backlog for the agent-skills repo. Each entry is a test commitment, not a feature spec. See CLAUDE.md for the TDD sequence. runner ∈ {bats, pytest, agent}. requires lists external tools that gate the test (skipped when missing).",
+  "entries": [
+    {
+      "id": "GWT-001",
+      "category": "cli",
+      "description": "__gwt_sanitize_name lowercases, replaces / and _ with -, strips leading/trailing -, truncates to 50 chars",
+      "test": "tests/cli/gwt.bats:sanitize_name",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "GWT-002",
+      "category": "cli",
+      "description": "__gwt_discover_ports parses ${*_PORT} from .env.template, preserves order, dedupes",
+      "test": "tests/cli/gwt.bats:discover_ports",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "GWT-003",
+      "category": "cli",
+      "description": "Port allocation assigns contiguous block from 40000 using first-fit against .gwt_index",
+      "test": "tests/cli/gwt.bats:port_allocation",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "GWT-004",
+      "category": "cli",
+      "description": "gwt-ports reports the assignment for the current worktree",
+      "test": "tests/cli/gwt.bats:gwt_ports_reports_assignment",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "GWT-005",
+      "category": "cli",
+      "description": "gwt with no branch arg or no template exits non-zero with a clear message",
+      "test": "tests/cli/gwt.bats:misuse_exits_nonzero",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "SEC-001",
+      "category": "cli",
+      "description": "security-audit --help, version, and setup --check-only succeed without mutation",
+      "test": "tests/cli/security_audit.bats:help_version_setup",
+      "runner": "bats",
+      "passes": true
+    },
+    {
+      "id": "SEC-002",
+      "category": "cli",
+      "description": "security-audit writes reports to XDG_DATA_HOME, never inside the scanned repo",
+      "test": "tests/cli/security_audit.bats:reports_land_in_xdg",
+      "runner": "bats",
+      "requires": ["gitleaks"],
+      "passes": true
+    },
+    {
+      "id": "SEC-003",
+      "category": "cli-functional",
+      "description": "scan detects a planted private key via gitleaks (deep profile)",
+      "test": "tests/cli/security_audit.bats:scan_finds_planted_secret",
+      "runner": "bats",
+      "requires": ["gitleaks"],
+      "passes": true
+    },
+    {
+      "id": "SEC-004",
+      "category": "cli-functional",
+      "description": "scan flags a known-vulnerable Python dep via trivy",
+      "test": "tests/cli/security_audit.bats:scan_flags_vulnerable_dep",
+      "runner": "bats",
+      "requires": ["trivy"],
+      "passes": true
+    },
+    {
+      "id": "SEC-005",
+      "category": "cli-functional",
+      "description": "scan flags a SAST code-pattern issue via semgrep",
+      "test": "tests/cli/security_audit.bats:scan_flags_semgrep_finding",
+      "runner": "bats",
+      "requires": ["semgrep"],
+      "passes": false,
+      "notes": "Auto-skips when semgrep is not on PATH; flips true after a green run with semgrep installed."
+    },
+    {
+      "id": "SEC-006",
+      "category": "cli",
+      "description": "report --latest returns the most recent scan",
+      "test": "tests/cli/security_audit.bats:report_latest",
+      "runner": "bats",
+      "requires": ["gitleaks"],
+      "passes": true
+    },
+    {
+      "id": "CONTENT-001",
+      "category": "content",
+      "description": "Every SKILL.md is named exactly SKILL.md and has frontmatter with a lowercase-hyphenated name matching its folder",
+      "test": "tests/content/test_skill_frontmatter.py",
+      "runner": "pytest",
+      "passes": true
+    },
+    {
+      "id": "CONTENT-002",
+      "category": "content",
+      "description": "Every references/*.md is linked from its SKILL.md (no orphans)",
+      "test": "tests/content/test_skill_frontmatter.py::test_no_orphan_references",
+      "runner": "pytest",
+      "passes": true
+    },
+    {
+      "id": "CONTENT-003",
+      "category": "content",
+      "description": "README.md skill table includes every top-level skill folder, links to anchors, and has a per-skill section",
+      "test": "tests/content/test_readme_index.py",
+      "runner": "pytest",
+      "passes": true
+    },
+    {
+      "id": "CONTENT-004",
+      "category": "content",
+      "description": "README mini-help block lists the same top-level commands as bin/<cli> --help",
+      "test": "tests/content/test_help_parity.py::test_readme_mini_help_matches_cli",
+      "runner": "pytest",
+      "passes": true
+    },
+    {
+      "id": "CONTENT-005",
+      "category": "content",
+      "description": "No em-dashes or en-dashes in *.md outside fenced code blocks",
+      "test": "tests/content/test_no_dashes.py::test_no_unicode_dashes",
+      "runner": "pytest",
+      "passes": true
+    },
+    {
+      "id": "RUBRIC-001",
+      "category": "prose",
+      "description": "SKILL.md descriptions trigger cleanly and don't overlap with siblings",
+      "rubric": "tests/rubrics/skill_description.md",
+      "runner": "agent",
+      "passes": false,
+      "notes": "Apply by reading the rubric and walking each SKILL.md frontmatter. Flip true once all criteria green."
+    },
+    {
+      "id": "RUBRIC-002",
+      "category": "prose",
+      "description": "Each reference doc is scoped to one concern and progressively discloses detail",
+      "rubric": "tests/rubrics/reference_clarity.md",
+      "runner": "agent",
+      "passes": false,
+      "notes": "Apply by walking every references/*.md against the rubric checklist."
+    },
+    {
+      "id": "RUBRIC-003",
+      "category": "prose",
+      "description": "README per-skill section covers motivation, structure, integrated tools, reference summary",
+      "rubric": "tests/rubrics/readme_skill_section.md",
+      "runner": "agent",
+      "passes": false,
+      "notes": "Apply per top-level skill section in README.md."
+    },
+    {
+      "id": "RUBRIC-004",
+      "category": "prose",
+      "description": "CLAUDE.md still matches actual repo state (paths, conventions, mandates)",
+      "rubric": "tests/rubrics/claude_md_coherence.md",
+      "runner": "agent",
+      "passes": false,
+      "notes": "Apply on demand, e.g. before a release or after major SKILL/CLI changes."
+    }
+  ]
+}

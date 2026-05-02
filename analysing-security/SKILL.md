@@ -1,5 +1,5 @@
 ---
-name: analyising-security
+name: analysing-security
 description: >
   Prevention-first security for software projects. Two workflows: a **design
   review** for applying secure-by-design principles before writing code, and a
@@ -11,14 +11,14 @@ description: >
 # secure-design
 
 This skill covers two complementary workflows: **designing secure software** and
-**auditing existing code**. Prevention comes first — catching a design flaw
+**auditing existing code**. Prevention comes first, catching a design flaw
 before implementation is cheaper than finding it in a scan afterward.
 
 ## Skill Contents
 
 | Path | What it is |
 |------|------------|
-| `bin/security-audit` | **Executable CLI** (bash) — the scanner. Run it directly or copy into target repos for CI. |
+| `bin/security-audit` | **Executable CLI** (bash), the scanner. Run it directly or copy into target repos for CI. |
 | `references/secure-design.md` | Design-time principles, architecture patterns, threat modeling process |
 | `references/agent-checks.md` | 18 code-review patterns for agent manual review (post-scan) |
 | `references/tool-catalog.md` | Per-tool invocation, output parsing, severity mapping |
@@ -27,7 +27,7 @@ before implementation is cheaper than finding it in a scan afterward.
 
 ---
 
-The following section covers the **design review workflow** — applying the
+The following section covers the **design review workflow**, applying the
 principles and patterns from `references/secure-design.md` to architecture
 proposals and new features before code is written. That reference contains 8
 core security principles, architecture-level patterns (auth, data protection,
@@ -49,7 +49,7 @@ Determine whether the design touches security-sensitive areas:
 - Infrastructure changes (ports, network, containers)
 - AI agent permissions or tool configurations
 
-If none apply, a design review is not needed — proceed normally.
+If none apply, a design review is not needed, proceed normally.
 
 ### 2. Apply Design Principles
 
@@ -72,7 +72,7 @@ Deliver findings to the user:
 - Which principles apply and whether the design satisfies them
 - Relevant checklists from `references/secure-design.md` §Architecture-Level Security Patterns
 - Threat-mitigation table (if threat modeling was performed)
-- Specific, actionable recommendations — not generic advice
+- Specific, actionable recommendations, not generic advice
 
 ### 5. Post-Implementation Audit
 
@@ -82,20 +82,20 @@ in code.
 
 ---
 
-The following sections cover the **audit workflow** — running the CLI scanner
+The following sections cover the **audit workflow**, running the CLI scanner
 and agent code review against an existing codebase.
 
 ## The CLI: `bin/security-audit`
 
-The audit workflow is driven by `bin/security-audit` — a bash script located
+The audit workflow is driven by `bin/security-audit`, a bash script located
 **in this skill folder**. It is not installed globally; run it by its path.
 
 **Prerequisites** (must be available before running the CLI):
-- **git** — the CLI detects the repo root via `git rev-parse`; it will refuse to
+- **git**, the CLI detects the repo root via `git rev-parse`; it will refuse to
   run outside a git repository
-- **bash 3.2+** — compatible with macOS default bash
-- **jq** — required for JSON processing (`security-audit setup` will install it)
-- **Scan tools** — gitleaks, semgrep, bandit, etc. are installed on first run
+- **bash 3.2+**, compatible with macOS default bash
+- **jq**, required for JSON processing (`security-audit setup` will install it)
+- **Scan tools**, gitleaks, semgrep, bandit, etc. are installed on first run
   via `security-audit setup`; the CLI auto-detects which tools apply to the repo
 
 ### Quick Reference
@@ -118,7 +118,7 @@ bin/security-audit version
 | `-v, --verbose` | Show tool commands and raw output |
 | `-q, --quiet` | Suppress progress output, exit code only |
 
-Reports are stored in `~/.local/share/security-audit/<repo>/` — never in the repo tree.
+Reports are stored in `~/.local/share/security-audit/<repo>/`, never in the repo tree.
 
 ## Audit Workflow
 
@@ -154,13 +154,13 @@ Or read `findings.json` directly for structured data:
 ### 3. Agent Code Review
 
 After the CLI scan, perform manual code review for patterns that tools miss.
-Use `references/agent-checks.md` — it contains 18 patterns with grep hints,
+Use `references/agent-checks.md`, it contains 18 patterns with grep hints,
 vulnerable code examples, and remediation guidance.
 
 | Profile | Patterns to check |
 |---------|-------------------|
 | quick | None (CLI only) |
-| standard | 1–5 (traditional) + 13–15 (AI/agent) |
+| standard | 1-5 (traditional) + 13-15 (AI/agent) |
 | deep | All 18 patterns |
 
 ### 4. Present Combined Findings
@@ -174,9 +174,9 @@ Combine CLI findings and agent review into a single summary for the user:
 
 | Code | Meaning |
 |------|---------|
-| 0 | Clean — no findings at Medium or above |
-| 1 | Findings — at least one Medium+ finding |
-| 2 | Tool error — one or more tools failed/timed out |
+| 0 | Clean, no findings at Medium or above |
+| 1 | Findings, at least one Medium+ finding |
+| 2 | Tool error, one or more tools failed/timed out |
 
 Priority: exit code 2 (tool error) takes precedence over exit code 1 (findings).
 If a scan has both tool errors and findings, exit code 2 is returned to signal
@@ -200,17 +200,17 @@ The `security-audit` CLI is **not installed globally** on CI runners. When setti
   run: .github/scripts/security-audit -p quick -q --sarif > results.sarif
 ```
 
-Use `assets/github-action.example.yml` as the starting template. See `references/ci-integration.md` for artifact configuration, caching, and threshold configuration. Note: GitHub's Security tab is only suitable for **private repositories** — on public repos, findings are visible to anyone with read access.
+Use `assets/github-action.example.yml` as the starting template. See `references/ci-integration.md` for artifact configuration, caching, and threshold configuration. Note: GitHub's Security tab is only suitable for **private repositories**, on public repos, findings are visible to anyone with read access.
 
 ## Security Documentation
 
-Maintain two complementary documents — a public security posture doc and a private findings tracker. These are not duplicative: `SECURITY.md` describes *what the security posture is*, `security_internal.md` describes *where it falls short and what's being done about it*.
+Maintain two complementary documents, a public security posture doc and a private findings tracker. These are not duplicative: `SECURITY.md` describes *what the security posture is*, `security_internal.md` describes *where it falls short and what's being done about it*.
 
 ### SECURITY.md (version controlled, committed to the repo)
 
 - Security policy and strategy for the project
 - Architecture decisions and controls in place (auth model, data protection, trust boundaries)
-- Threat model summary (assets, actors, boundaries — from the design review workflow)
+- Threat model summary (assets, actors, boundaries, from the design review workflow)
 - Dependency management policy
 - Vulnerability disclosure/reporting process
 
@@ -218,7 +218,7 @@ Apply `references/secure-design.md` principles to tailor this document to the sp
 
 ### security_internal.md (private, never committed to a public repo)
 
-- References `SECURITY.md` for the baseline — does NOT duplicate it
+- References `SECURITY.md` for the baseline, does NOT duplicate it
 - Current known vulnerabilities and their status (open, mitigating, accepted risk)
 - Specific remediation plans with timelines
 - Scan findings that haven't been resolved yet
@@ -229,22 +229,22 @@ Apply `references/secure-design.md` principles to tailor this document to the sp
 
 Three CLI output patterns for getting findings into the private tracker:
 
-1. **Local report library** (`~/.local/share/security-audit/<repo>/`) — the default. Stored outside the project tree, zero risk of accidental commit.
-2. **SARIF** (`--sarif`) — structured format for tooling. Store as CI artifacts, never upload to GitHub Security tab on public repos.
-3. **Stdout piping** (`--stdout`, `--json`) — agent can direct output into `security_internal.md` or any private system.
+1. **Local report library** (`~/.local/share/security-audit/<repo>/`), the default. Stored outside the project tree, zero risk of accidental commit.
+2. **SARIF** (`--sarif`), structured format for tooling. Store as CI artifacts, never upload to GitHub Security tab on public repos.
+3. **Stdout piping** (`--stdout`, `--json`), agent can direct output into `security_internal.md` or any private system.
 
 ## Reference Files
 
 **CLI**
-- `bin/security-audit` — executable scanner CLI (bash); run by path, requires git + jq
+- `bin/security-audit`, executable scanner CLI (bash); run by path, requires git + jq
 
 **Design (prevention)**
-- `references/secure-design.md` — secure-by-design principles, architecture-level security patterns, lightweight threat modeling process
+- `references/secure-design.md`, secure-by-design principles, architecture-level security patterns, lightweight threat modeling process
 
 **Audit (detection)**
-- `references/tool-catalog.md` — per-tool invocation, parsing, severity mapping
-- `references/agent-checks.md` — 18 code-review patterns with examples
+- `references/tool-catalog.md`, per-tool invocation, parsing, severity mapping
+- `references/agent-checks.md`, 18 code-review patterns with examples
 
 **CI/CD**
-- `references/ci-integration.md` — CI/CD pipeline setup guide
-- `assets/github-action.example.yml` — GitHub Actions workflow template
+- `references/ci-integration.md`, CI/CD pipeline setup guide
+- `assets/github-action.example.yml`, GitHub Actions workflow template

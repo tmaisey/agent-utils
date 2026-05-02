@@ -13,8 +13,8 @@ ports:
   - "${DB_PORT:-5432}:5432"
 ```
 
-- `${DB_PORT:-5432}` — read from `.env`; fall back to `5432` if unset
-- `:5432` — internal container port (always fixed)
+- `${DB_PORT:-5432}`, read from `.env`; fall back to `5432` if unset
+- `:5432`, internal container port (always fixed)
 
 The `:-default` fallback is critical: it means the root worktree works with standard ports even without a `.env` file.
 
@@ -176,7 +176,7 @@ services:
 
 For projects with both dev and prod compose files:
 
-- `docker-compose.yml` — dev configuration with `${VAR:-default}` port patterns
-- `docker-compose.prod.yml` — production overrides (fixed ports, no defaults needed)
+- `docker-compose.yml`, dev configuration with `${VAR:-default}` port patterns
+- `docker-compose.prod.yml`, production overrides (fixed ports, no defaults needed)
 
 The gwt-docker conventions apply only to the dev compose file.
