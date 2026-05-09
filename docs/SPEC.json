@@ -1,5 +1,5 @@
 {
-  "$schema_note": "Test-coverage backlog for the agent-skills repo. Each entry is a test commitment, not a feature spec. See CLAUDE.md for the TDD sequence. runner ∈ {bats, pytest, agent}. requires lists external tools that gate the test (skipped when missing).",
+  "$schema_note": "Test-coverage backlog for the agent-utils repo. Each entry is a test commitment, not a feature spec. See CLAUDE.md for the TDD sequence. runner ∈ {bats, pytest, agent}. requires lists external tools that gate the test (skipped when missing).",
   "entries": [
     {
       "id": "GWT-001",

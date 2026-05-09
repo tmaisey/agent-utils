@@ -1,4 +1,4 @@
-# Agent Skills
+# Agent Utils
 
 A personal collection of [agent skills](https://agentskills.io/). Reusable skill modules I use across projects.
 
@@ -13,7 +13,7 @@ A personal collection of [agent skills](https://agentskills.io/). Reusable skill
 
 ## analysing-security
 
-[↑ back to top](#agent-skills)
+[↑ back to top](#agent-utils)
 
 ### Motivation
 
@@ -128,7 +128,7 @@ The CLI auto-detects the languages and infrastructure in the target repo and dis
 
 ## managing-git-worktrees
 
-[↑ back to top](#agent-skills)
+[↑ back to top](#agent-utils)
 
 ### Motivation
 

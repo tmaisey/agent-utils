@@ -1,6 +1,6 @@
 #!/bin/zsh
 # gwt.sh — Git worktree helper with Docker port isolation
-# Source from .zshrc: source /path/to/agent-skills/gwt-docker/bin/gwt.sh
+# Source from .zshrc: source /path/to/agent-utils/managing-git-worktrees/bin/gwt.sh
 # Or run directly: ./gwt.sh <command> [args]
 
 __GWT_PORT_BASE=40000
